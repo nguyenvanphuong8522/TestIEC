@@ -32,11 +32,12 @@ public class Item
 
         if (!string.IsNullOrEmpty(prefabname))
         {
-            GameObject prefab = Resources.Load<GameObject>(prefabname);
-            
+            //GameObject prefab = Resources.Load<GameObject>(prefabname);
+            GameObject prefab = ObjectPool.instance.Get(ObjectPool.instance.items[0]);
+            prefab.transform.localScale = Vector3.one;
             if (prefab)
             {
-                View = GameObject.Instantiate(prefab).transform;
+                View = prefab.transform;
             }
             if(prefab.TryGetComponent(out SpriteRenderer spriteRenderer)) {
                 spriteRenderer.sprite = sprite;
@@ -122,7 +123,7 @@ public class Item
             View.DOScale(0.1f, 0.1f).OnComplete(
                 () =>
                 {
-                    GameObject.Destroy(View.gameObject);
+                   ObjectPool.instance.Return(View.gameObject);
                     View = null;
                 }
                 );
