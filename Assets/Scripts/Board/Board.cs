@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class Board
 {
+    private TextureSet textureSet;
     public enum eMatchDirection
     {
         NONE,
@@ -25,7 +26,7 @@ public class Board
 
     private int m_matchMin;
 
-    public Board(Transform transform, GameSettings gameSettings)
+    public Board(Transform transform, GameSettings gameSettings, TextureSet textureSet)
     {
         m_root = transform;
 
@@ -33,7 +34,7 @@ public class Board
 
         this.boardSizeX = gameSettings.BoardSizeX;
         this.boardSizeY = gameSettings.BoardSizeY;
-
+        this.textureSet = textureSet;
         m_cells = new Cell[boardSizeX, boardSizeY];
 
         CreateBoard();
@@ -100,8 +101,9 @@ public class Board
                     }
                 }
 
-                item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()));
-                item.SetView();
+                NormalItem.eNormalType eType = Utils.GetRandomNormalTypeExcept(types.ToArray());
+                item.SetType(eType);
+                item.SetView(textureSet.textures[(int)eType]);
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
@@ -151,7 +153,7 @@ public class Board
                 //Lấy ra item có số lượng ít nhất.
                 NormalItem.eNormalType perfectItemType = FindItemTypeWithMinCount(cellsSurround);
                 item.SetType(perfectItemType);
-                item.SetView();
+                item.SetView(textureSet.textures[(int)perfectItemType]);
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
@@ -387,7 +389,7 @@ public class Board
                 cellToConvert = matches[rnd];
             }
 
-            item.SetView();
+            item.SetView(textureSet.textures[(int)dir]);
             item.SetViewRoot(m_root);
 
             cellToConvert.Free();

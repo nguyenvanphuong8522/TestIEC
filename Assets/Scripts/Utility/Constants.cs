@@ -2,7 +2,11 @@
 {
     public const string GAME_SETTINGS_PATH = "gamesettings";
 
+    public const string GAME_TEXTURE_PATH = "textureSet";
+
     public const string PREFAB_CELL_BACKGROUND = "prefabs/cellBackground";
+
+    public const string PREFAB_NORMAL_TYPE = "prefabs/itemNormal";
 
     public const string PREFAB_NORMAL_TYPE_ONE = "prefabs/itemNormal01";
 

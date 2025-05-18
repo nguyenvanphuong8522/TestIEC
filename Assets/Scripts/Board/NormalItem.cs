@@ -51,6 +51,7 @@ public class NormalItem : Item
         }
 
         return prefabname;
+        //return Constants.PREFAB_NORMAL_TYPE;
     }
 
     internal override bool IsSameType(Item other)

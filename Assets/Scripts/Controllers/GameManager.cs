@@ -45,12 +45,14 @@ public class GameManager : MonoBehaviour
 
     private LevelCondition m_levelCondition;
 
+    private TextureSet m_textureSet;
+
     private void Awake()
     {
         State = eStateGame.SETUP;
 
         m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
-
+        m_textureSet = Resources.Load<TextureSet>(Constants.GAME_TEXTURE_PATH);
         m_uiMenu = FindObjectOfType<UIMainManager>();
         m_uiMenu.Setup(this);
     }
@@ -84,7 +86,7 @@ public class GameManager : MonoBehaviour
     public void LoadLevel(eLevelMode mode)
     {
         m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
-        m_boardController.StartGame(this, m_gameSettings);
+        m_boardController.StartGame(this, m_gameSettings, m_textureSet);
 
         if (mode == eLevelMode.MOVES)
         {
