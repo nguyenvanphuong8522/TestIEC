@@ -303,4 +303,8 @@ public class BoardController : MonoBehaviour
 
         m_potentialMatch.Clear();
     }
+    internal void Refill()
+    {
+        StartCoroutine(RefillBoardCoroutine());
+    }
 }

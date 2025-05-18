@@ -8,6 +8,8 @@ public class LevelMoves : LevelCondition
 {
     private int m_moves;
 
+    private int m_TimeOrigin;
+
     private BoardController m_board;
 
     public override void Setup(float value, Text txt, BoardController board)
@@ -16,10 +18,18 @@ public class LevelMoves : LevelCondition
 
         m_moves = (int)value;
 
+        m_TimeOrigin = (int)value;
+
         m_board = board;
 
         m_board.OnMoveEvent += OnMove;
 
+        UpdateText();
+    }
+
+    public override void RestartLevel()
+    {
+        m_moves = m_TimeOrigin;
         UpdateText();
     }
 
