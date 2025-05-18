@@ -146,8 +146,11 @@ public class Board
                 if (!cell.IsEmpty) continue;
 
                 NormalItem item = new NormalItem();
-
-                item.SetType(Utils.GetRandomNormalType());
+                //Lấy ra danh sách item 4 ô xung quanh.
+                HashSet<NormalItem.eNormalType> cellsSurround = GetFourSuround(x, y);
+                //Lấy ra item có số lượng ít nhất.
+                NormalItem.eNormalType perfectItemType = FindItemTypeWithMinCount(cellsSurround);
+                item.SetType(perfectItemType);
                 item.SetView();
                 item.SetViewRoot(m_root);
 
@@ -155,6 +158,108 @@ public class Board
                 cell.ApplyItemPosition(true);
             }
         }
+    }
+
+
+    /// <summary>
+    /// Tìm 4 item type xung quanh.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    internal HashSet<NormalItem.eNormalType> GetFourSuround(int x, int y)
+    {
+        HashSet<NormalItem.eNormalType> cellsEType = new HashSet<NormalItem.eNormalType>();
+        if (x - 1 >= 0 && x - 1 < boardSizeX)
+        {
+            Cell cell = m_cells[x - 1, y];
+            NormalItem normalItem = cell.Item as NormalItem;
+            if (normalItem != null)
+            {
+                cellsEType.Add(normalItem.ItemType);
+            }
+        }
+        if (x + 1 >= 0 && x + 1 < boardSizeX)
+        {
+            Cell cell = m_cells[x + 1, y];
+            NormalItem normalItem = cell.Item as NormalItem;
+            if (normalItem != null)
+            {
+                cellsEType.Add(normalItem.ItemType);
+            }
+        }
+        if (y - 1 >= 0 && y - 1 < boardSizeY)
+        {
+            Cell cell = m_cells[x, y - 1];
+            NormalItem normalItem = cell.Item as NormalItem;
+            if (normalItem != null)
+            {
+                cellsEType.Add(normalItem.ItemType);
+            }
+        }
+        if (y + 1 >= 0 && y + 1 < boardSizeY)
+        {
+            Cell cell = m_cells[x, y + 1];
+            NormalItem normalItem = cell.Item as NormalItem;
+            if (normalItem != null)
+            {
+                cellsEType.Add(normalItem.ItemType);
+            }
+        }
+        return cellsEType;
+    }
+
+    /// <summary>
+    /// Hàm này lấy ra phần tử có số lượng ít nhất trong bảng.
+    /// </summary>
+    internal NormalItem.eNormalType FindItemTypeWithMinCount(HashSet<NormalItem.eNormalType> cellsETyp)
+    {
+        NormalItem.eNormalType resultCell;
+        Dictionary<NormalItem.eNormalType, int> counts = new Dictionary<NormalItem.eNormalType, int>();
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                if (cell.IsEmpty) continue;
+                NormalItem normalItem = cell.Item as NormalItem;
+                if (normalItem == null)
+                {
+                    continue;
+                }
+                //Nếu là item giống 4 item xung quanh thì bỏ.
+                if (cellsETyp.Contains(normalItem.ItemType)) continue;
+
+                NormalItem.eNormalType textureType = normalItem.ItemType;
+                if (counts.ContainsKey(textureType))
+                {
+                    counts[textureType]++;
+                }
+                else
+                {
+                    counts.Add(textureType, 1);
+                }
+
+            }
+        }
+        //Find min
+        int minCount = int.MaxValue;
+        foreach (var kv in counts)
+        {
+            if (kv.Value < minCount)
+            {
+                minCount = kv.Value;
+            }
+        }
+        //Tìm item có số lượng ít nhất trên board.
+        foreach (var kv in counts.Keys)
+        {
+            if (counts[kv] == minCount)
+            {
+                return kv; ;
+            }
+        }
+        return NormalItem.eNormalType.TYPE_ONE;
     }
 
     internal void ExplodeAllItems()
@@ -350,7 +455,7 @@ public class Board
         var dir = GetMatchDirection(matches);
 
         var bonus = matches.Where(x => x.Item is BonusItem).FirstOrDefault();
-        if(bonus == null)
+        if (bonus == null)
         {
             return matches;
         }
